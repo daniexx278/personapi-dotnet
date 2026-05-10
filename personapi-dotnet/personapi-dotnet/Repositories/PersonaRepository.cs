@@ -36,7 +36,6 @@ namespace personapi_dotnet.Repositories
             _context.Personas.Update(persona);
         }
 
-        // ELIMINAR PERSONA
         public void Delete(int cc)
         {
             var persona = _context.Personas.Find(cc);
