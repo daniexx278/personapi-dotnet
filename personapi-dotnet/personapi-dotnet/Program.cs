@@ -10,6 +10,9 @@ builder.Services.AddDbContext<PersonaDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<IPersonaRepository, PersonaRepository>();
+builder.Services.AddScoped<IEstudioRepository, EstudioRepository>();
+builder.Services.AddScoped<IProfesionRepository, ProfesionRepository>();
+builder.Services.AddScoped<ITelefonoRepository, TelefonoRepository>();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
