@@ -11,5 +11,5 @@ public partial class Telefono
 
     public int Duenio { get; set; }
 
-    public virtual Persona DuenioNavigation { get; set; } = null!;
+    public virtual Persona? DuenioNavigation { get; set; }
 }

@@ -18,152 +18,93 @@ namespace personapi_dotnet.Controllers
             _context = context;
         }
 
-        // GET: EstudiosMvc
         public async Task<IActionResult> Index()
         {
-            var personaDbContext = _context.Estudios.Include(e => e.CcPerNavigation).Include(e => e.IdProfNavigation);
-            return View(await personaDbContext.ToListAsync());
-        }
-
-        // GET: EstudiosMvc/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var estudio = await _context.Estudios
+            return View(await _context.Estudios
                 .Include(e => e.CcPerNavigation)
                 .Include(e => e.IdProfNavigation)
-                .FirstOrDefaultAsync(m => m.IdProf == id);
-            if (estudio == null)
-            {
-                return NotFound();
-            }
-
-            return View(estudio);
+                .ToListAsync());
         }
 
-        // GET: EstudiosMvc/Create
         public IActionResult Create()
         {
-            ViewData["CcPer"] = new SelectList(_context.Personas, "Cc", "Cc");
-            ViewData["IdProf"] = new SelectList(_context.Profesions, "Id", "Id");
+            ViewData["CcPer"] = new SelectList(_context.Personas.ToList(), "Cc", "Cc");
+            ViewData["IdProf"] = new SelectList(_context.Profesions.ToList(), "Id", "Nom");
             return View();
         }
 
-        // POST: EstudiosMvc/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdProf,CcPer,Fecha,Univer")] Estudio estudio)
+        public async Task<IActionResult> Create(Estudio estudio)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                _context.Add(estudio);
+                return View(estudio);
+            }
+
+            try
+            {
+                _context.Estudios.Add(estudio);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+
             ViewData["CcPer"] = new SelectList(_context.Personas, "Cc", "Cc", estudio.CcPer);
-            ViewData["IdProf"] = new SelectList(_context.Profesions, "Id", "Id", estudio.IdProf);
+            ViewData["IdProf"] = new SelectList(_context.Profesions, "Id", "Nom", estudio.IdProf);
             return View(estudio);
         }
 
-        // GET: EstudiosMvc/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? idProf, int? ccPer)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (idProf == null || ccPer == null) return NotFound();
 
-            var estudio = await _context.Estudios.FindAsync(id);
-            if (estudio == null)
-            {
-                return NotFound();
-            }
+            var estudio = await _context.Estudios.FindAsync(idProf, ccPer);
+            if (estudio == null) return NotFound();
+
             ViewData["CcPer"] = new SelectList(_context.Personas, "Cc", "Cc", estudio.CcPer);
-            ViewData["IdProf"] = new SelectList(_context.Profesions, "Id", "Id", estudio.IdProf);
+            ViewData["IdProf"] = new SelectList(_context.Profesions, "Id", "Nom", estudio.IdProf);
+
             return View(estudio);
         }
 
-        // POST: EstudiosMvc/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdProf,CcPer,Fecha,Univer")] Estudio estudio)
+        public async Task<IActionResult> Edit(int idProf, int ccPer, Estudio estudio)
         {
-            if (id != estudio.IdProf)
-            {
-                return NotFound();
-            }
+            if (!ModelState.IsValid) return View(estudio);
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(estudio);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EstudioExists(estudio.IdProf))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["CcPer"] = new SelectList(_context.Personas, "Cc", "Cc", estudio.CcPer);
-            ViewData["IdProf"] = new SelectList(_context.Profesions, "Id", "Id", estudio.IdProf);
-            return View(estudio);
-        }
-
-        // GET: EstudiosMvc/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var estudio = await _context.Estudios
-                .Include(e => e.CcPerNavigation)
-                .Include(e => e.IdProfNavigation)
-                .FirstOrDefaultAsync(m => m.IdProf == id);
-            if (estudio == null)
-            {
-                return NotFound();
-            }
-
-            return View(estudio);
-        }
-
-        // POST: EstudiosMvc/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var estudio = await _context.Estudios.FindAsync(id);
-            if (estudio != null)
-            {
-                _context.Estudios.Remove(estudio);
-            }
-
+            _context.Update(estudio);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
-        private bool EstudioExists(int id)
+        public async Task<IActionResult> Delete(int idProf, int ccPer)
         {
-            return _context.Estudios.Any(e => e.IdProf == id);
+            var estudio = await _context.Estudios
+                .Include(e => e.CcPerNavigation)
+                .Include(e => e.IdProfNavigation)
+                .FirstOrDefaultAsync(x => x.IdProf == idProf && x.CcPer == ccPer);
+
+            return View(estudio);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int idProf, int ccPer)
+        {
+            var estudio = await _context.Estudios.FindAsync(idProf, ccPer);
+
+            if (estudio != null)
+            {
+                _context.Estudios.Remove(estudio);
+                await _context.SaveChangesAsync();
+            }
+
+            return RedirectToAction(nameof(Index));
         }
     }
-}
+ }

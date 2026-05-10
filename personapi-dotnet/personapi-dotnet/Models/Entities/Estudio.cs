@@ -9,11 +9,11 @@ public partial class Estudio
 
     public int CcPer { get; set; }
 
-    public DateOnly? Fecha { get; set; }
+    public DateTime? Fecha { get; set; }
 
     public string? Univer { get; set; }
 
-    public virtual Persona CcPerNavigation { get; set; } = null!;
+    public virtual Persona? CcPerNavigation { get; set; }
 
-    public virtual Profesion IdProfNavigation { get; set; } = null!;
+    public virtual Profesion? IdProfNavigation { get; set; }
 }
