@@ -17,6 +17,9 @@ builder.Services.AddScoped<ITelefonoRepository, TelefonoRepository>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddEndpointsApiExplorer();
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
