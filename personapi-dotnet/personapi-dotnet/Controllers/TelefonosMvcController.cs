@@ -26,6 +26,21 @@ namespace personapi_dotnet.Controllers
                 .ToListAsync());
         }
 
+        public async Task<IActionResult> Details(string id)
+        {
+            if (id == null)
+                return NotFound();
+
+            var telefono = await _context.Telefonos
+                .Include(t => t.DuenioNavigation)
+                .FirstOrDefaultAsync(t => t.Num == id);
+
+            if (telefono == null)
+                return NotFound();
+
+            return View(telefono);
+        }
+
         // CREATE GET
         public IActionResult Create()
         {

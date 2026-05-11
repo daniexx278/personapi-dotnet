@@ -26,6 +26,23 @@ namespace personapi_dotnet.Controllers
                 .ToListAsync());
         }
 
+        public async Task<IActionResult> Details(int? idProf, int? ccPer)
+        {
+            if (idProf == null || ccPer == null)
+                return NotFound();
+
+            var estudio = await _context.Estudios
+                .Include(e => e.CcPerNavigation)
+                .Include(e => e.IdProfNavigation)
+                .FirstOrDefaultAsync(e =>
+                    e.IdProf == idProf &&
+                    e.CcPer == ccPer);
+
+            if (estudio == null)
+                return NotFound();
+
+            return View(estudio);
+        }
         public IActionResult Create()
         {
             ViewData["CcPer"] = new SelectList(_context.Personas.ToList(), "Cc", "Cc");
