@@ -217,3 +217,28 @@ El proyecto utiliza:
 - GitHub
 - Commits versionados
 - TAG final de entrega
+
+## Despliegue en línea
+
+La aplicación fue desplegada utilizando ASP.NET Core MVC y SQL Server remoto mediante MonsterASP.NET.
+
+Acceso al sistema desplegado:
+
+http://arquitecturasoftlaboratorio1.runasp.net/
+
+Desde este enlace es posible acceder a:
+
+- CRUD de Personas
+- CRUD de Profesiones
+- CRUD de Estudios
+- CRUD de Teléfonos
+- Swagger API
+- Navegación MVC completa
+
+Tecnologías utilizadas en el despliegue:
+
+- ASP.NET Core MVC
+- Entity Framework Core
+- SQL Server
+- MonsterASP.NET
+- IIS Web Deploy
